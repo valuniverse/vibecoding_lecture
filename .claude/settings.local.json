@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth login)",
+      "Bash(gh repo create vibecoding_lecture --public)",
+      "Bash(git init)",
+      "Bash(git remote add origin https://github.com/valuniverse/vibecoding_lecture.git)",
+      "Bash(git add README.md)",
+      "Bash(git commit -m \"Add README.md\")",
+      "Bash(git branch -M main)",
+      "Bash(git push -u origin main)",
+      "Bash(git remote set-url origin git@github.com:valuniverse/vibecoding_lecture.git)",
+      "Bash(gh auth setup-git)",
+      "Bash(git remote set-url origin https://github.com/valuniverse/vibecoding_lecture.git)"
+    ]
+  }
+}
