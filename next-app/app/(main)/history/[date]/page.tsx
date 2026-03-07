@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import { use } from 'react'
 import { useHistory } from '@/hooks/useHistory'
 import { HistoryDetail } from '@/components/history/HistoryDetail'

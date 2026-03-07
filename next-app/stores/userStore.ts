@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { User } from '@/types/user'
 
 interface UserStore {
@@ -8,6 +8,21 @@ interface UserStore {
   clearUser: () => void
 }
 
+const ssrSafeStorage = createJSONStorage(() => ({
+  getItem: (name: string) => {
+    if (typeof window === 'undefined') return null
+    return localStorage.getItem(name)
+  },
+  setItem: (name: string, value: string) => {
+    if (typeof window === 'undefined') return
+    localStorage.setItem(name, value)
+  },
+  removeItem: (name: string) => {
+    if (typeof window === 'undefined') return
+    localStorage.removeItem(name)
+  },
+}))
+
 export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
@@ -15,6 +30,6 @@ export const useUserStore = create<UserStore>()(
       setUser: (user) => set({ user }),
       clearUser: () => set({ user: null }),
     }),
-    { name: 'user-store' }
+    { name: 'user-store', storage: ssrSafeStorage }
   )
 )
