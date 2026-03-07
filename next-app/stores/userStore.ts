@@ -1,35 +1,36 @@
 import { create } from 'zustand'
-import { persist, createJSONStorage } from 'zustand/middleware'
 import { User } from '@/types/user'
 
 interface UserStore {
   user: User | null
+  hydrated: boolean
   setUser: (user: User) => void
   clearUser: () => void
+  hydrate: () => void
 }
 
-const ssrSafeStorage = createJSONStorage(() => ({
-  getItem: (name: string) => {
-    if (typeof window === 'undefined') return null
-    return localStorage.getItem(name)
+export const useUserStore = create<UserStore>()((set) => ({
+  user: null,
+  hydrated: false,
+  setUser: (user) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('wellness-user', JSON.stringify(user))
+    }
+    set({ user })
   },
-  setItem: (name: string, value: string) => {
-    if (typeof window === 'undefined') return
-    localStorage.setItem(name, value)
+  clearUser: () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('wellness-user')
+    }
+    set({ user: null })
   },
-  removeItem: (name: string) => {
+  hydrate: () => {
     if (typeof window === 'undefined') return
-    localStorage.removeItem(name)
+    try {
+      const stored = localStorage.getItem('wellness-user')
+      set({ user: stored ? JSON.parse(stored) : null, hydrated: true })
+    } catch {
+      set({ hydrated: true })
+    }
   },
 }))
-
-export const useUserStore = create<UserStore>()(
-  persist(
-    (set) => ({
-      user: null,
-      setUser: (user) => set({ user }),
-      clearUser: () => set({ user: null }),
-    }),
-    { name: 'user-store', storage: ssrSafeStorage }
-  )
-)
