@@ -19,18 +19,19 @@ export default function FeedbackPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (feedback: Feedback) => {
-    if (!user) return
     setIsLoading(true)
 
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) return
+
     await supabase.from('workout_logs').insert({
-      user_id: user.id,
+      user_id: authUser.id,
       date: new Date().toISOString().split('T')[0],
       routine,
       reason,
       completion: feedback.completion,
       rating: feedback.rating,
       comment: feedback.comment,
-      checkin_summary: summary,
     })
 
     resetWorkout()

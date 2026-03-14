@@ -14,7 +14,7 @@ export default function HomePage() {
   const isComplete = useCheckinStore((s) => s.isComplete)
 
   useEffect(() => {
-    if (!user) router.replace('/onboarding')
+    if (!user) router.replace('/login')
   }, [user, router])
 
   if (!user) return null

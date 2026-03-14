@@ -33,9 +33,15 @@ export default function OnboardingPage() {
     if (!nickname || !goal || !level) return
     setIsLoading(true)
 
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    if (!authUser) {
+      router.push('/login')
+      return
+    }
+
     const { data, error } = await supabase
-      .from('users')
-      .insert({ nickname, goal, level, caution_parts: cautionParts })
+      .from('profiles')
+      .insert({ id: authUser.id, nickname, goal, level, caution_parts: cautionParts })
       .select()
       .single()
 

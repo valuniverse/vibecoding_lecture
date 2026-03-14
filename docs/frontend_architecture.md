@@ -21,6 +21,8 @@
 src/
 ├── app/                          # Next.js App Router
 │   ├── (auth)/
+│   │   ├── login/
+│   │   │   └── page.tsx          # 로그인 화면 (Google OAuth)
 │   │   └── onboarding/
 │   │       └── page.tsx          # S-02, S-03 온보딩
 │   ├── (main)/
@@ -94,8 +96,9 @@ src/
 ## 3. 라우팅 구조
 
 ```
-/                    → 스플래시 → 홈 or 온보딩으로 리다이렉트
-/onboarding          → S-02~03 온보딩
+/                    → 로그인 여부 확인 → 홈 or 로그인으로 리다이렉트
+/login               → Google 로그인 화면
+/onboarding          → 첫 로그인 후 프로필 등록
 /checkin             → S-05 데일리 체크인
 /dashboard           → S-06 추천 대시보드
 /workout             → S-07 운동 수행
@@ -111,11 +114,17 @@ src/
 ### userStore
 ```ts
 {
-  id: string
-  nickname: string
-  goal: '체중감량' | '근력향상' | '체력유지' | '스트레스해소'
-  level: '초급' | '중급' | '고급'
-  cautionParts: string[]
+  // Supabase Auth 세션
+  session: Session | null       // supabase.auth.getSession()으로 초기화
+
+  // 앱 프로필 (profiles 테이블)
+  user: {
+    id: string                  // auth.uid()와 동일
+    nickname: string
+    goal: '체중감량' | '근력향상' | '체력유지' | '스트레스해소'
+    level: '초급' | '중급' | '고급'
+    cautionParts: string[]
+  } | null
 }
 ```
 
